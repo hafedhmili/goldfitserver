@@ -55,7 +55,7 @@ async function findProgramDetailsWithName(programName: string, response:any) {
 //      response.status(201).send(result)
 //    });
 
-    client.query(programQuery, async function (err:any, result:any, fields:any) {
+    client.query(programQuery, async function (err:any, result:any) {
       if (err) throw err;
       if ((!result) || (result.length ==0)){
         response.status(404).send('Did not find program with name: '+ programName)
@@ -82,17 +82,27 @@ function stringifyArrayRowDataPackets(rows: any) {
 */
 async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, response:any) {
   var res: any;
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "root",
-    database: 'GoldFit'
+
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
   });
 
-  var res = await con.connect( async function(err: any, res:any) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
+  client.connect();
+
+//  var con = mysql.createConnection({
+//    host: "localhost",
+//    user: "root",
+//    password: "root",
+//    database: 'GoldFit'
+//  });
+
+//  var res = await con.connect( async function(err: any, res:any) {
+//    if (err) throw err;
+//    console.log("Connected!");
+//  });
 
 
   var selectClause = "SELECT PatientFirstName, PatientLastName, ProgramName, ProgramDuration, ProgramDescription ",
@@ -101,7 +111,8 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
       "ProgramEnrollment.PatientID = Patient.idPatient AND " +
       "ProgramEnrollment.ProgramEnrollmentCode = \"" + enrollmentCode + "\"";
   var programQuery = selectClause + fromClause + whereCLAUSE;  
-  var res = await con.query(programQuery, async function (err:any, result:any, fields:any) {
+
+  client.query(programQuery, async function (err:any, result:any) {
       if (err) throw err;
       if ((!result) || (result.length ==0)){
         response.status(404).send('Did not find program for enrollmernt code: '+ enrollmentCode)

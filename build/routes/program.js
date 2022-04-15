@@ -49,7 +49,7 @@ function findProgramDetailsWithName(programName, response) {
         //      response.set('Access-Control-Allow-Origin', '*');
         //      response.status(201).send(result)
         //    });
-        client.query(programQuery, function (err, result, fields) {
+        client.query(programQuery, function (err, result) {
             return __awaiter(this, void 0, void 0, function* () {
                 if (err)
                     throw err;
@@ -78,24 +78,28 @@ function stringifyArrayRowDataPackets(rows) {
 function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
     return __awaiter(this, void 0, void 0, function* () {
         var res;
-        var con = mysql.createConnection({
-            host: "localhost",
-            user: "root",
-            password: "root",
-            database: 'GoldFit'
+        const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: {
+                rejectUnauthorized: false
+            }
         });
-        var res = yield con.connect(function (err, res) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (err)
-                    throw err;
-                console.log("Connected!");
-            });
-        });
+        client.connect();
+        //  var con = mysql.createConnection({
+        //    host: "localhost",
+        //    user: "root",
+        //    password: "root",
+        //    database: 'GoldFit'
+        //  });
+        //  var res = await con.connect( async function(err: any, res:any) {
+        //    if (err) throw err;
+        //    console.log("Connected!");
+        //  });
         var selectClause = "SELECT PatientFirstName, PatientLastName, ProgramName, ProgramDuration, ProgramDescription ", fromClause = "FROM ProgramEnrollment, Program, Patient ", whereCLAUSE = "WHERE ProgramEnrollment.ProgramId = Program.idProgram AND " +
             "ProgramEnrollment.PatientID = Patient.idPatient AND " +
             "ProgramEnrollment.ProgramEnrollmentCode = \"" + enrollmentCode + "\"";
         var programQuery = selectClause + fromClause + whereCLAUSE;
-        var res = yield con.query(programQuery, function (err, result, fields) {
+        client.query(programQuery, function (err, result) {
             return __awaiter(this, void 0, void 0, function* () {
                 if (err)
                     throw err;
