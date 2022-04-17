@@ -113,7 +113,7 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
       fromClause =  "FROM goldfit.ProgramEnrollment, goldfit.Program, goldfit.Patient ",
       whereCLAUSE = "WHERE goldfit.ProgramEnrollment.ProgramId = goldfit.Program.idProgram AND "+
       "goldfit.ProgramEnrollment.PatientID = goldfit.Patient.idPatient AND " +
-      "goldfit.ProgramEnrollment.ProgramEnrollmentCode = \"" + enrollmentCode + "\"";
+      "goldfit.ProgramEnrollment.ProgramEnrollmentCode = \'" + enrollmentCode + "\'";
   var programQuery = selectClause + fromClause + whereCLAUSE;  
 
   client.query(programQuery, async function (err:any, result:any) {
