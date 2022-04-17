@@ -4,7 +4,7 @@ import  {ExerciseSeries} from '../models/program';
 import  {Program} from '../models/program';
 
 var mysql = require('mysql');
-const { Client } = require('pg');
+import { Client } from 'pg';
 
 const Router = require('express');
 var router = Router();
@@ -83,11 +83,15 @@ function stringifyArrayRowDataPackets(rows: any) {
 async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, response:any) {
   var res: any;
 
+  console.log("Inside findProgramHeaderForEnrollmentCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL,
+  "and process.env.PORT has value: ", process.env.PORT)
+
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
-    }
+    ssl: false
+//    ssl: {
+//      rejectUnauthorized: false
+//    }
   });
 
   client.connect();
@@ -106,10 +110,10 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
 
 
   var selectClause = "SELECT PatientFirstName, PatientLastName, ProgramName, ProgramDuration, ProgramDescription ",
-      fromClause =  "FROM ProgramEnrollment, Program, Patient ",
-      whereCLAUSE = "WHERE ProgramEnrollment.ProgramId = Program.idProgram AND "+
-      "ProgramEnrollment.PatientID = Patient.idPatient AND " +
-      "ProgramEnrollment.ProgramEnrollmentCode = \"" + enrollmentCode + "\"";
+      fromClause =  "FROM goldfit.ProgramEnrollment, goldfit.Program, goldfit.Patient ",
+      whereCLAUSE = "WHERE goldfit.ProgramEnrollment.ProgramId = goldfit.Program.idProgram AND "+
+      "goldfit.ProgramEnrollment.PatientID = goldfit.Patient.idPatient AND " +
+      "goldfit.ProgramEnrollment.ProgramEnrollmentCode = \"" + enrollmentCode + "\"";
   var programQuery = selectClause + fromClause + whereCLAUSE;  
 
   client.query(programQuery, async function (err:any, result:any) {

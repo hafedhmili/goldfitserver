@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var mysql = require('mysql');
-const { Client } = require('pg');
+const pg_1 = require("pg");
 const Router = require('express');
 var router = Router();
 function findProgramDetailsWithName(programName, response) {
@@ -22,7 +22,7 @@ function findProgramDetailsWithName(programName, response) {
         //    password: "root",
         //    database: 'GoldFit'
         //  });
-        const client = new Client({
+        const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
             ssl: {
                 rejectUnauthorized: false
@@ -78,11 +78,13 @@ function stringifyArrayRowDataPackets(rows) {
 function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
     return __awaiter(this, void 0, void 0, function* () {
         var res;
-        const client = new Client({
+        console.log("Inside findProgramHeaderForEnrollmentCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL, "and process.env.PORT has value: ", process.env.PORT);
+        const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: {
-                rejectUnauthorized: false
-            }
+            ssl: false
+            //    ssl: {
+            //      rejectUnauthorized: false
+            //    }
         });
         client.connect();
         //  var con = mysql.createConnection({
@@ -95,9 +97,9 @@ function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
         //    if (err) throw err;
         //    console.log("Connected!");
         //  });
-        var selectClause = "SELECT PatientFirstName, PatientLastName, ProgramName, ProgramDuration, ProgramDescription ", fromClause = "FROM ProgramEnrollment, Program, Patient ", whereCLAUSE = "WHERE ProgramEnrollment.ProgramId = Program.idProgram AND " +
-            "ProgramEnrollment.PatientID = Patient.idPatient AND " +
-            "ProgramEnrollment.ProgramEnrollmentCode = \"" + enrollmentCode + "\"";
+        var selectClause = "SELECT PatientFirstName, PatientLastName, ProgramName, ProgramDuration, ProgramDescription ", fromClause = "FROM goldfit.ProgramEnrollment, goldfit.Program, goldfit.Patient ", whereCLAUSE = "WHERE goldfit.ProgramEnrollment.ProgramId = goldfit.Program.idProgram AND " +
+            "goldfit.ProgramEnrollment.PatientID = goldfit.Patient.idPatient AND " +
+            "goldfit.ProgramEnrollment.ProgramEnrollmentCode = \"" + enrollmentCode + "\"";
         var programQuery = selectClause + fromClause + whereCLAUSE;
         client.query(programQuery, function (err, result) {
             return __awaiter(this, void 0, void 0, function* () {
