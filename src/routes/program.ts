@@ -20,9 +20,10 @@ async function findProgramDetailsWithName(programName: string, response:any) {
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
-    }
+    ssl: false
+//    ssl: {
+//      rejectUnauthorized: false
+//    }
   });
 
   client.connect();
@@ -34,12 +35,12 @@ async function findProgramDetailsWithName(programName: string, response:any) {
 //  });
 
   var selectClause = "SELECT * ",
-      fromClause =  "FROM Program, ProgramExerciceSeries, ExerciceSeries, ExerciceSeriesExercice, Exercice ",
-      whereCLAUSE = "WHERE Program.ProgramName = \"" + programName + "\" AND "+
-      "Program.idProgram = ProgramExerciceSeries.ProgramId AND "+   // join Program with ProgramExerciceSeries
-      "ProgramExerciceSeries.ExerciceSeriesId = ExerciceSeries.idExerciceSeries AND " +   // join ProgramExerciceSeries with ExerciceSeries
-      "ExerciceSeries.idExerciceSeries = ExerciceSeriesExercice.ExerciceSeriesId AND " +   // join ExerciceSeries with ExerciceSeriesExerice
-      "ExerciceSeriesExercice.ExerciceId = Exercice.idExercice";    // join ExerciceSeriesExerice with Exercice
+      fromClause =  "FROM goldfit.Program, goldfit.ProgramExerciceSeries, goldfit.ExerciceSeries, goldfit.ExerciceSeriesExercice, goldfit.Exercice ",
+      whereCLAUSE = "WHERE goldfit.Program.ProgramName = \'" + programName + "\' AND "+
+      "goldfit.Program.idProgram = goldfit.ProgramExerciceSeries.ProgramId AND "+   // join Program with ProgramExerciceSeries
+      "goldfit.ProgramExerciceSeries.ExerciceSeriesId = goldfit.ExerciceSeries.idExerciceSeries AND " +   // join ProgramExerciceSeries with ExerciceSeries
+      "goldfit.ExerciceSeries.idExerciceSeries = goldfit.ExerciceSeriesExercice.ExerciceSeriesId AND " +   // join ExerciceSeries with ExerciceSeriesExerice
+      "goldfit.ExerciceSeriesExercice.ExerciceId = goldfit.Exercice.idExercice";    // join ExerciceSeriesExerice with Exercice
   var programQuery = selectClause + fromClause + whereCLAUSE;  
 
 
@@ -63,7 +64,7 @@ async function findProgramDetailsWithName(programName: string, response:any) {
       }
       console.log('Found a program with name: ' + programName + ', which is: ',result);
       response.set('Access-Control-Allow-Origin', '*');
-      response.status(201).send(result)
+      response.status(201).send(result.rows)
     });
     
 
@@ -123,10 +124,11 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
         return
       }
       
-      const returnResult = stringifyArrayRowDataPackets(result)
-      console.log('Found an enrollment record, which is: ',returnResult);
+//      const returnResult = stringifyArrayRowDataPackets(result)
+//      console.log('Found an enrollment record, which is: ',returnResult);
+console.log('Found an enrollment record, which is: ',result);
       response.set('Access-Control-Allow-Origin', '*');
-      response.status(201).send(returnResult)
+      response.status(201).send(result.rows)
     });
   return ;
 }

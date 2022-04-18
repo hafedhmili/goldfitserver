@@ -24,20 +24,21 @@ function findProgramDetailsWithName(programName, response) {
         //  });
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: {
-                rejectUnauthorized: false
-            }
+            ssl: false
+            //    ssl: {
+            //      rejectUnauthorized: false
+            //    }
         });
         client.connect();
         //  var res = await con.connect( async function(err: any, res:any) {
         //    if (err) throw err;
         //    console.log("Connected!");
         //  });
-        var selectClause = "SELECT * ", fromClause = "FROM Program, ProgramExerciceSeries, ExerciceSeries, ExerciceSeriesExercice, Exercice ", whereCLAUSE = "WHERE Program.ProgramName = \"" + programName + "\" AND " +
-            "Program.idProgram = ProgramExerciceSeries.ProgramId AND " + // join Program with ProgramExerciceSeries
-            "ProgramExerciceSeries.ExerciceSeriesId = ExerciceSeries.idExerciceSeries AND " + // join ProgramExerciceSeries with ExerciceSeries
-            "ExerciceSeries.idExerciceSeries = ExerciceSeriesExercice.ExerciceSeriesId AND " + // join ExerciceSeries with ExerciceSeriesExerice
-            "ExerciceSeriesExercice.ExerciceId = Exercice.idExercice"; // join ExerciceSeriesExerice with Exercice
+        var selectClause = "SELECT * ", fromClause = "FROM goldfit.Program, goldfit.ProgramExerciceSeries, goldfit.ExerciceSeries, goldfit.ExerciceSeriesExercice, goldfit.Exercice ", whereCLAUSE = "WHERE goldfit.Program.ProgramName = \'" + programName + "\' AND " +
+            "goldfit.Program.idProgram = goldfit.ProgramExerciceSeries.ProgramId AND " + // join Program with ProgramExerciceSeries
+            "goldfit.ProgramExerciceSeries.ExerciceSeriesId = goldfit.ExerciceSeries.idExerciceSeries AND " + // join ProgramExerciceSeries with ExerciceSeries
+            "goldfit.ExerciceSeries.idExerciceSeries = goldfit.ExerciceSeriesExercice.ExerciceSeriesId AND " + // join ExerciceSeries with ExerciceSeriesExerice
+            "goldfit.ExerciceSeriesExercice.ExerciceId = goldfit.Exercice.idExercice"; // join ExerciceSeriesExerice with Exercice
         var programQuery = selectClause + fromClause + whereCLAUSE;
         //  var res = await con.query(programQuery, async function (err:any, result:any, fields:any) {
         //      if (err) throw err;
@@ -59,7 +60,7 @@ function findProgramDetailsWithName(programName, response) {
                 }
                 console.log('Found a program with name: ' + programName + ', which is: ', result);
                 response.set('Access-Control-Allow-Origin', '*');
-                response.status(201).send(result);
+                response.status(201).send(result.rows);
             });
         });
     });
@@ -109,10 +110,11 @@ function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
                     response.status(404).send('Did not find program for enrollmernt code: ' + enrollmentCode);
                     return;
                 }
-                const returnResult = stringifyArrayRowDataPackets(result);
-                console.log('Found an enrollment record, which is: ', returnResult);
+                //      const returnResult = stringifyArrayRowDataPackets(result)
+                //      console.log('Found an enrollment record, which is: ',returnResult);
+                console.log('Found an enrollment record, which is: ', result);
                 response.set('Access-Control-Allow-Origin', '*');
-                response.status(201).send(returnResult);
+                response.status(201).send(result.rows);
             });
         });
         return;
