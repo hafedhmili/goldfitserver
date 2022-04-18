@@ -24,10 +24,10 @@ function findProgramDetailsWithName(programName, response) {
         //  });
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: false
-            //    ssl: {
-            //      rejectUnauthorized: false
-            //    }
+            //    ssl: false
+            ssl: {
+                rejectUnauthorized: false
+            }
         });
         client.connect();
         //  var res = await con.connect( async function(err: any, res:any) {
@@ -82,10 +82,10 @@ function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
         console.log("Inside findProgramHeaderForEnrollmentCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL, "and process.env.PORT has value: ", process.env.PORT);
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: false
-            //    ssl: {
-            //      rejectUnauthorized: false
-            //    }
+            //    ssl: false
+            ssl: {
+                rejectUnauthorized: false
+            }
         });
         client.connect();
         //  var con = mysql.createConnection({

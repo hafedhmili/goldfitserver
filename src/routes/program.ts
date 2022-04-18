@@ -20,10 +20,10 @@ async function findProgramDetailsWithName(programName: string, response:any) {
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: false
-//    ssl: {
-//      rejectUnauthorized: false
-//    }
+//    ssl: false
+    ssl: {
+      rejectUnauthorized: false
+    }
   });
 
   client.connect();
@@ -89,10 +89,10 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: false
-//    ssl: {
-//      rejectUnauthorized: false
-//    }
+//    ssl: false
+    ssl: {
+      rejectUnauthorized: false
+    }
   });
 
   client.connect();
