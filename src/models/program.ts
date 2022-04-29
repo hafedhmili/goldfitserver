@@ -165,7 +165,7 @@ export enum SelfEfficacy {
     HighlyConfident = "Highly Confident",
     Confident = "Confident",
     LittleConfident = "Little Confident",
-    NotConfident = "NotConfident"
+    NotConfident = "Not Confident"
 }
 
 export enum PainLevel {
@@ -239,15 +239,29 @@ export class ProgramEnrollment {
         this.dayRecords = new Map<Date,ProgramDayRecord>();
     }
 
+    /**
+     * A utility function that computes the number of days elapsed between
+     * two dates given as an argument
+     * @param d1 
+     * @param d2 
+     * @returns 
+     */
     getNumberOfDaysBetween(d1:Date,d2:Date) {
-        var timeDifference = d2.getTime() - d1.getTime();
-        // I add 60000, which is the equivalent of a minute in milliseconds
-        // to make sure I don't lose a day due to imprecision.
-        return Math.round((timeDifference + 60000)/(1000*3600*24));
+        const days1 = Math.round(d1.getTime()/(1000*3600*24))
+        const days2 = Math.round(d2.getTime()/(1000*3600*24))
+
+        return days2 - days1
     }
 
+    /**
+     * returns the exercice series that corresponds to a particular date. This
+     * depends on: 1) the (structure of the) program, and 2) the start date of
+     * the program.
+     * @param day 
+     * @returns 
+     */
     getExerciseSeriesForDay(day: Date) {
-        const dayOfTheProgram = this.getNumberOfDaysBetween(this.startDate, day);
+        const dayOfTheProgram = this.getNumberOfDaysBetween(this.startDate, day)+1;
         return this.program.getExerciseSeriesForDay(dayOfTheProgram);
     }
 
@@ -270,6 +284,13 @@ export class ProgramEnrollment {
             return progDayRecord;
         }
         return null;
+    }
+
+    /**
+     * returns the day record for a specific date
+     */
+    getDayRecordForDay(day:Date){
+        return this.dayRecords.get(day)
     }
 
 }

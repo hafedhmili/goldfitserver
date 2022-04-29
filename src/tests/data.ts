@@ -56,15 +56,15 @@ function createSomeData  () {
 
     var day = 1;
 
-    console.log('Exercice segment for day: ' + day + ' of program ' + pg2.name + ' is: '+pg2.getExerciseSeriesForDay(day))
+    console.log('Exercice segment for day: ', day, ' of program ', pg2.name, ' is: ', pg2.getExerciseSeriesForDay(day))
 
     day = 30;
 
-    console.log('Exercice segment for day: ' + day + ' of program ' + pg2.name + ' is: '+pg2.getExerciseSeriesForDay(day))
+    console.log('Exercice segment for day: ', day, ' of program ', pg2.name, ' is: ', pg2.getExerciseSeriesForDay(day))
 
     day = 65;
 
-    console.log('Exercice segment for day: ' + day + ' of program ' + pg2.name + ' is: '+pg2.getExerciseSeriesForDay(day))
+    console.log('Exercice segment for day: ', day, ' of program ', pg2.name, ' is: ', pg2.getExerciseSeriesForDay(day))
 
     const segmentNumber = 2;
     
@@ -89,6 +89,11 @@ function createSomeData  () {
     const date3 = new Date(2022,4,15)
     const exSeries3 = progEnrollment.getExerciseSeriesForDay(date3)
     console.log('Exercise series for date ', date3, ' is: ', exSeries3)
+
+    // generate exercise day record for date2. It should be an instance
+    // of exercice series 2
+    progEnrollment.initializeDayRecordForDay(date2)
+    console.log('Day record for: ',date2, ' is:', progEnrollment.getDayRecordForDay(date2))
 
   }
 
