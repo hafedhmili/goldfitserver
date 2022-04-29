@@ -88,10 +88,9 @@ class Program {
         //        stringProgSequences = stringProgSequences+ element.key + '->' + element.value +','
         //    })
         //    stringProgSequences = stringProgSequences.replace(/.$/,'}')
-        var globalString = '{' + '"name" : "' + this.name + '";' +
-            '"description" : "' + this.description + '";' +
-            '"duration" : "' + this.duration + '";' +
-            '"mapExerciseSeries" : "' + stringProgSequences + '}';
+        var globalString = '{ "name" : "' + this.name + '";"description" : "' +
+            this.description + '"; "duration" : "' + this.duration +
+            '"; "mapExerciseSeries" : "' + stringProgSequences + '}';
         return globalString;
     }
 }
