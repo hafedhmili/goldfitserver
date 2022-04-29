@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Program = exports.Interval = exports.ExerciseSeries = exports.Exercise = void 0;
+exports.ProgramEnrollment = exports.ProgramDayRecord = exports.SatisfactionLevel = exports.PainLevel = exports.SelfEfficacy = exports.DifficultyLevel = exports.ExerciseRecord = exports.Patient = exports.Program = exports.Interval = exports.ExerciseSeries = exports.Exercise = void 0;
 class Exercise {
     constructor(n, d, nR, ur) {
         this.name = n;
@@ -97,3 +97,116 @@ class Program {
 }
 exports.Program = Program;
 ;
+class Patient {
+    constructor(fName, lName, id) {
+        this.firstName = fName;
+        this.lastName = lName;
+        this.patientId = id;
+    }
+}
+exports.Patient = Patient;
+class ExerciseRecord {
+    constructor(ex, numSeries, numRepetitions) {
+        this.exercise = ex;
+        this.numberSeries = numSeries;
+        this.numberRepetitions = numRepetitions;
+    }
+}
+exports.ExerciseRecord = ExerciseRecord;
+var DifficultyLevel;
+(function (DifficultyLevel) {
+    DifficultyLevel["VeryVeryEasy"] = "Very Very Easy";
+    DifficultyLevel["VeryEasy"] = "Very Easy";
+    DifficultyLevel["Easy"] = "Easy";
+    DifficultyLevel["RelativelyEasy"] = "Relatively Easy";
+    DifficultyLevel["Average"] = "Average";
+    DifficultyLevel["RelativelyDifficult"] = "Relatively Difficult";
+    DifficultyLevel["Difficult"] = "Difficult";
+    DifficultyLevel["VeryDifficult"] = "Very Difficult";
+    DifficultyLevel["VeryVeryDifficult"] = "Very Very Difficult";
+    DifficultyLevel["IncrediblyDifficult"] = "Incredibly Difficult";
+})(DifficultyLevel = exports.DifficultyLevel || (exports.DifficultyLevel = {}));
+var SelfEfficacy;
+(function (SelfEfficacy) {
+    SelfEfficacy["HighlyConfident"] = "Highly Confident";
+    SelfEfficacy["Confident"] = "Confident";
+    SelfEfficacy["LittleConfident"] = "Little Confident";
+    SelfEfficacy["NotConfident"] = "NotConfident";
+})(SelfEfficacy = exports.SelfEfficacy || (exports.SelfEfficacy = {}));
+var PainLevel;
+(function (PainLevel) {
+    PainLevel["NoPain"] = "No Pain";
+    PainLevel["LittlePain"] = "Little Pain";
+    PainLevel["ModeratePain"] = "Moderate Pain";
+    PainLevel["SeverePain"] = "Severe Pain";
+})(PainLevel = exports.PainLevel || (exports.PainLevel = {}));
+var SatisfactionLevel;
+(function (SatisfactionLevel) {
+    SatisfactionLevel["VerySatisfied"] = "Very Satisfied";
+    SatisfactionLevel["Satisfied"] = "Satisfied";
+    SatisfactionLevel["Insatisfied"] = "Insatisfied";
+    SatisfactionLevel["VeryInsatisfied"] = "Very Insatisfied";
+})(SatisfactionLevel = exports.SatisfactionLevel || (exports.SatisfactionLevel = {}));
+class ProgramDayRecord {
+    constructor(d, exSeries) {
+        this.day = d;
+        this.exerciseSeries = exSeries;
+        this.exerciceRecords = new Map();
+        this.difficultyLevel = DifficultyLevel.Average;
+        this.selfEfficacy = SelfEfficacy.NotConfident;
+        this.painLevel = PainLevel.NoPain;
+        this.satisfactionLevel = SatisfactionLevel.Satisfied;
+        if (!exSeries) {
+            console.log('Exercise series is undefined. Cannot define program day record. The list of exercise records is empty');
+            return;
+        }
+        var exRecord;
+        const numExs = exSeries.getNumberOfExercices();
+        for (var idx = 1; idx <= numExs; idx++) {
+            const exercise = exSeries.getExerciseAtPosition(idx);
+            if (exercise) {
+                exRecord = new ExerciseRecord(exercise, 0, 0);
+                this.exerciceRecords.set(exercise, exRecord);
+            }
+        }
+    }
+}
+exports.ProgramDayRecord = ProgramDayRecord;
+class ProgramEnrollment {
+    constructor(p, prog, code, enrDate, startDate) {
+        this.patient = p;
+        this.program = prog;
+        this.enrollmentCode = code;
+        this.enrollmentDate = enrDate;
+        this.startDate = startDate;
+        this.dayRecords = new Map();
+    }
+    getNumberOfDaysBetween(d1, d2) {
+        var timeDifference = d2.getTime() - d1.getTime();
+        // I add 60000, which is the equivalent of a minute in milliseconds
+        // to make sure I don't lose a day due to imprecision.
+        return Math.round((timeDifference + 60000) / (1000 * 3600 * 24));
+    }
+    getExerciseSeriesForDay(day) {
+        const dayOfTheProgram = this.getNumberOfDaysBetween(this.startDate, day);
+        return this.program.getExerciseSeriesForDay(dayOfTheProgram);
+    }
+    /**
+     * This function is used to initialize a program day record for <code>day</code>
+     * based on date day, on program start date, and on program itself.
+     * Users can then edit values for series and repetitions for the exercises in the
+     * series of the day.
+     * @param day
+     * @returns
+     */
+    initializeDayRecordForDay(day) {
+        const exerciseSeries = this.getExerciseSeriesForDay(day);
+        if (exerciseSeries) {
+            const progDayRecord = new ProgramDayRecord(day, exerciseSeries);
+            this.dayRecords.set(day, progDayRecord);
+            return progDayRecord;
+        }
+        return null;
+    }
+}
+exports.ProgramEnrollment = ProgramEnrollment;

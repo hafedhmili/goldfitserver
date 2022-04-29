@@ -119,3 +119,157 @@ export class Program  {
 
 
 };
+
+export class Patient {
+    firstName: String;
+    lastName: String;
+    patientId: number;
+    
+
+    constructor(fName:String, lName: string, id: number) {
+        this.firstName = fName;
+        this.lastName = lName;
+        this.patientId = id;
+    }
+
+
+}
+
+export class ExerciseRecord {
+    exercise: Exercise;
+    numberSeries: number;
+    numberRepetitions: number;
+
+    constructor(ex: Exercise, numSeries: number, numRepetitions: number) {
+        this.exercise = ex;
+        this.numberSeries = numSeries;
+        this.numberRepetitions = numRepetitions;
+    }
+
+}
+
+export enum DifficultyLevel {
+    VeryVeryEasy = "Very Very Easy",
+    VeryEasy = "Very Easy",
+    Easy = "Easy",
+    RelativelyEasy = "Relatively Easy",
+    Average = "Average",
+    RelativelyDifficult = "Relatively Difficult",
+    Difficult = "Difficult",
+    VeryDifficult = "Very Difficult",
+    VeryVeryDifficult = "Very Very Difficult",
+    IncrediblyDifficult = "Incredibly Difficult"
+}
+
+export enum SelfEfficacy {
+    HighlyConfident = "Highly Confident",
+    Confident = "Confident",
+    LittleConfident = "Little Confident",
+    NotConfident = "NotConfident"
+}
+
+export enum PainLevel {
+    NoPain = "No Pain",
+    LittlePain = "Little Pain",
+    ModeratePain = "Moderate Pain",
+    SeverePain = "Severe Pain"
+}
+
+export enum SatisfactionLevel {
+    VerySatisfied = "Very Satisfied",
+    Satisfied = "Satisfied",
+    Insatisfied = "Insatisfied",
+    VeryInsatisfied = "Very Insatisfied"
+}
+
+export class ProgramDayRecord {
+    day: Date;
+    exerciseSeries: ExerciseSeries;
+    exerciceRecords : Map<Exercise,ExerciseRecord>;
+    difficultyLevel: DifficultyLevel;
+    selfEfficacy: SelfEfficacy;
+    painLevel: PainLevel;
+    satisfactionLevel: SatisfactionLevel;
+
+    constructor(d: Date, exSeries: ExerciseSeries){
+        
+        this.day = d;
+        this.exerciseSeries = exSeries;
+        this.exerciceRecords = new Map<Exercise,ExerciseRecord>();
+        this.difficultyLevel = DifficultyLevel.Average;
+        this.selfEfficacy = SelfEfficacy.NotConfident;
+        this.painLevel = PainLevel.NoPain;
+        this.satisfactionLevel = SatisfactionLevel.Satisfied;
+
+
+        if (!exSeries){
+            console.log('Exercise series is undefined. Cannot define program day record. The list of exercise records is empty');
+            return ;
+        }
+
+        var exRecord: ExerciseRecord ;
+        const numExs = exSeries.getNumberOfExercices();
+        for (var idx = 1; idx <= numExs; idx++) {
+            const exercise = exSeries.getExerciseAtPosition(idx);
+            if (exercise) {
+                exRecord = new ExerciseRecord (exercise, 0, 0);
+                this.exerciceRecords.set(exercise,exRecord)
+            }
+
+        }
+
+    }
+
+
+}
+export class ProgramEnrollment {
+    patient: Patient;
+    program: Program;
+    enrollmentCode: String;
+    enrollmentDate: Date;
+    startDate: Date;
+    dayRecords: Map<Date,ProgramDayRecord>;
+
+    constructor(p:Patient, prog: Program, code: String,enrDate: Date, startDate: Date){
+        this.patient = p;
+        this.program = prog;
+        this.enrollmentCode = code;
+        this.enrollmentDate = enrDate;
+        this.startDate = startDate;
+        this.dayRecords = new Map<Date,ProgramDayRecord>();
+    }
+
+    getNumberOfDaysBetween(d1:Date,d2:Date) {
+        var timeDifference = d2.getTime() - d1.getTime();
+        // I add 60000, which is the equivalent of a minute in milliseconds
+        // to make sure I don't lose a day due to imprecision.
+        return Math.round((timeDifference + 60000)/(1000*3600*24));
+    }
+
+    getExerciseSeriesForDay(day: Date) {
+        const dayOfTheProgram = this.getNumberOfDaysBetween(this.startDate, day);
+        return this.program.getExerciseSeriesForDay(dayOfTheProgram);
+    }
+
+    
+    /**
+     * This function is used to initialize a program day record for <code>day</code>
+     * based on date day, on program start date, and on program itself. 
+     * Users can then edit values for series and repetitions for the exercises in the
+     * series of the day.
+     * @param day 
+     * @returns 
+     */
+    initializeDayRecordForDay(day:Date){
+
+        const exerciseSeries = this.getExerciseSeriesForDay(day);
+
+        if(exerciseSeries) {
+            const progDayRecord = new ProgramDayRecord(day,exerciseSeries);
+            this.dayRecords.set(day,progDayRecord);
+            return progDayRecord;
+        }
+        return null;
+    }
+
+}
