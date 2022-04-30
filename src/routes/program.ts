@@ -110,7 +110,7 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
 //  });
 
 
-  var selectClause = "SELECT PatientFirstName, PatientLastName, ProgramName, ProgramDuration, ProgramDescription ",
+  var selectClause = "SELECT PatientFirstName, PatientLastName, idPatient, ProgramName, idProgramEnrollment, idProgram,ProgramDuration, ProgramDescription, ProgramEnrollmentDate, ProgramStartDate ",
       fromClause =  "FROM goldfit.ProgramEnrollment, goldfit.Program, goldfit.Patient ",
       whereCLAUSE = "WHERE goldfit.ProgramEnrollment.ProgramId = goldfit.Program.idProgram AND "+
       "goldfit.ProgramEnrollment.PatientID = goldfit.Patient.idPatient AND " +

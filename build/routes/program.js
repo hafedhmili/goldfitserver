@@ -98,7 +98,7 @@ function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
         //    if (err) throw err;
         //    console.log("Connected!");
         //  });
-        var selectClause = "SELECT PatientFirstName, PatientLastName, ProgramName, ProgramDuration, ProgramDescription ", fromClause = "FROM goldfit.ProgramEnrollment, goldfit.Program, goldfit.Patient ", whereCLAUSE = "WHERE goldfit.ProgramEnrollment.ProgramId = goldfit.Program.idProgram AND " +
+        var selectClause = "SELECT PatientFirstName, PatientLastName, idPatient, ProgramName, idProgramEnrollment, idProgram,ProgramDuration, ProgramDescription, ProgramEnrollmentDate, ProgramStartDate ", fromClause = "FROM goldfit.ProgramEnrollment, goldfit.Program, goldfit.Patient ", whereCLAUSE = "WHERE goldfit.ProgramEnrollment.ProgramId = goldfit.Program.idProgram AND " +
             "goldfit.ProgramEnrollment.PatientID = goldfit.Patient.idPatient AND " +
             "goldfit.ProgramEnrollment.ProgramEnrollmentCode = \'" + enrollmentCode + "\'";
         var programQuery = selectClause + fromClause + whereCLAUSE;
