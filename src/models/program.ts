@@ -282,14 +282,32 @@ export class ProgramEnrollment {
     }
     
     /**
+     * This function takes a date and strips it of hour, minute and second component.
+     * This will simply with maps indexed by dates, so that different times during the
+     * same day map to the same key/object
+     * @param date
+     * @returns a Date object having the same year, month, and day
+     */
+    stripDateToYearMonthDate(date: Date){
+        const year = date.getFullYear()
+        const month = date.getMonth()
+        const day = date.getDate()
+        return new Date(year,month,day)
+    }
+
+    /**
      * This function is used to initialize a program day record for <code>day</code>
      * based on date day, on program start date, and on program itself. 
      * Users can then edit values for series and repetitions for the exercises in the
      * series of the day.
+     * We should note that here, we strip the day of hour-min-sec, and leave it just with
+     * year, month, and day.
+     * This stripping will be used for inserting/writing and retrieving/reading
      * @param day 
      * @returns 
      */
-    initializeDayRecordForDay(day:Date){
+    initializeDayRecordForDay(fullDateObject:Date){
+        const day = this.stripDateToYearMonthDate(fullDateObject)
 
         const exerciseSeries = this.getExerciseSeriesForDay(day);
 
@@ -304,7 +322,8 @@ export class ProgramEnrollment {
     /**
      * returns the day record for a specific date
      */
-    getDayRecordForDay(day:Date){
+    getDayRecordForDay(fullDateObject:Date){
+        const day = this.stripDateToYearMonthDate(fullDateObject)
         return this.dayRecords.get(day.getTime())
     }
 
