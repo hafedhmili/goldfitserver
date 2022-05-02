@@ -227,7 +227,9 @@ export class ProgramEnrollment {
     enrollmentCode: String;
     enrollmentDate: Date;
     startDate: Date;
-    dayRecords: Map<Date,ProgramDayRecord>;
+    // here, the dayRecords map is indexed by the day, but given as time in milliseconds,
+    // i.e., the result of Date.getTime()
+    dayRecords: Map<number,ProgramDayRecord>;
 
     constructor(p:Patient, prog: Program, code: String,enrDate: Date, startDate: Date){
         this.patient = p;
@@ -235,7 +237,7 @@ export class ProgramEnrollment {
         this.enrollmentCode = code;
         this.enrollmentDate = enrDate;
         this.startDate = startDate;
-        this.dayRecords = new Map<Date,ProgramDayRecord>();
+        this.dayRecords = new Map<number,ProgramDayRecord>();
     }
 
     /**
@@ -293,7 +295,7 @@ export class ProgramEnrollment {
 
         if(exerciseSeries) {
             const progDayRecord = new ProgramDayRecord(day,exerciseSeries);
-            this.dayRecords.set(day,progDayRecord);
+            this.dayRecords.set(day.getTime(),progDayRecord);
             return progDayRecord;
         }
         return null;
@@ -303,7 +305,7 @@ export class ProgramEnrollment {
      * returns the day record for a specific date
      */
     getDayRecordForDay(day:Date){
-        return this.dayRecords.get(day)
+        return this.dayRecords.get(day.getTime())
     }
 
 }

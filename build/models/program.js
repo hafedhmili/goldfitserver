@@ -229,7 +229,7 @@ class ProgramEnrollment {
         const exerciseSeries = this.getExerciseSeriesForDay(day);
         if (exerciseSeries) {
             const progDayRecord = new ProgramDayRecord(day, exerciseSeries);
-            this.dayRecords.set(day, progDayRecord);
+            this.dayRecords.set(day.getTime(), progDayRecord);
             return progDayRecord;
         }
         return null;
@@ -238,7 +238,7 @@ class ProgramEnrollment {
      * returns the day record for a specific date
      */
     getDayRecordForDay(day) {
-        return this.dayRecords.get(day);
+        return this.dayRecords.get(day.getTime());
     }
 }
 exports.ProgramEnrollment = ProgramEnrollment;
