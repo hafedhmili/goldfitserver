@@ -148,16 +148,10 @@ export class ExerciseRecord {
 }
 
 export enum DifficultyLevel {
-    VeryVeryEasy = "Very Very Easy",
-    VeryEasy = "Very Easy",
+    VeryVeryEasy = "Very  Easy",
     Easy = "Easy",
-    RelativelyEasy = "Relatively Easy",
-    Average = "Average",
-    RelativelyDifficult = "Relatively Difficult",
     Difficult = "Difficult",
-    VeryDifficult = "Very Difficult",
-    VeryVeryDifficult = "Very Very Difficult",
-    IncrediblyDifficult = "Incredibly Difficult"
+    VeryDifficult = "Very Difficult"
 }
 
 export enum SelfEfficacy {
@@ -195,7 +189,7 @@ export class ProgramDayRecord {
         this.day = d;
         this.exerciseSeries = exSeries;
         this.exerciceRecords = new Map<Exercise,ExerciseRecord>();
-        this.difficultyLevel = DifficultyLevel.Average;
+        this.difficultyLevel = DifficultyLevel.Easy;
         this.selfEfficacy = SelfEfficacy.NotConfident;
         this.painLevel = PainLevel.NoPain;
         this.satisfactionLevel = SatisfactionLevel.Satisfied;
