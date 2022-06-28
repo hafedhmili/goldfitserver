@@ -175,6 +175,11 @@ export enum SatisfactionLevel {
     VeryInsatisfied = "Very Insatisfied"
 }
 
+export enum MotivationLevel {
+    Motivated = "Motivated",
+    NotMotivated = "NotMotivated"
+}
+
 export class ProgramDayRecord {
     day: Date;
     exerciseSeries: ExerciseSeries;
@@ -183,6 +188,7 @@ export class ProgramDayRecord {
     selfEfficacy: SelfEfficacy;
     painLevel: PainLevel;
     satisfactionLevel: SatisfactionLevel;
+    motivationLevel: MotivationLevel;
 
     constructor(d: Date, exSeries: ExerciseSeries){
         
@@ -193,6 +199,7 @@ export class ProgramDayRecord {
         this.selfEfficacy = SelfEfficacy.NotConfident;
         this.painLevel = PainLevel.NoPain;
         this.satisfactionLevel = SatisfactionLevel.Satisfied;
+        this.motivationLevel = MotivationLevel.Motivated;
 
 
         if (!exSeries){

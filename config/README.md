@@ -1,5 +1,5 @@
 After making changes:
-*  npx tsc: this will translate typescript files ionto equivalent javascript files found generated in the /build directory. "npm start" actually executes a javascript file from that directory
+*  npx tsc: this will translate typescript files into equivalent javascript files found generated in the /build directory. "npm start" actually executes a javascript file from that directory
 *   (optional) git status, to see what changed
 *   if there are new files (status would tell us that), do "git add ." to add everything under the current directory
 *   git commit -a -m "message explaining changes made to code that was just piushed" 
