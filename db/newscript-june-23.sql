@@ -67,8 +67,15 @@ CREATE TYPE goldfit."SelfEfficacy" AS ENUM (
     'NotConfident'
 );
 
-
 -- ALTER TYPE goldfit."SelfEfficacy" OWNER TO postgres;
+
+CREATE TYPE goldfit."MotivationLevel" AS ENUM (
+    'Motivated',
+    'NotMotivated'
+);
+
+-- ALTER TYPE goldfit."MotivationLevel" OWNER TO postgres;
+
 
 SET default_tablespace = '';
 
@@ -179,7 +186,8 @@ CREATE TABLE goldfit.programdayrecord (
     satisfactionlevel goldfit."SatisfactionLevel",
     difficultylevel goldfit."DifficultyLevel",
     selfefficacy goldfit."SelfEfficacy",
-    painlevel goldfit."PainLevel"
+    painlevel goldfit."PainLevel",
+    motivationLevel goldfit."MotivationLevel"
 );
 
 
@@ -296,9 +304,9 @@ INSERT INTO goldfit.programenrollment (idprogramenrollment, patientid, programid
 --
 
 INSERT INTO goldfit.programexerciceseries (programexerciceseriesid, programid, exerciceseriesid, startday, endday) VALUES (1, 1, 3, 1, 60);
-INSERT INTO goldfit.programexerciceseries (programexerciceseriesid, programid, exerciceseriesid, startday, endday) VALUES (2, 2, 1, 1, 19);
-INSERT INTO goldfit.programexerciceseries (programexerciceseriesid, programid, exerciceseriesid, startday, endday) VALUES (3, 2, 2, 20, 39);
-INSERT INTO goldfit.programexerciceseries (programexerciceseriesid, programid, exerciceseriesid, startday, endday) VALUES (4, 2, 3, 40, 60);
+INSERT INTO goldfit.programexerciceseries (programexerciceseriesid, programid, exerciceseriesid, startday, endday) VALUES (2, 2, 1, 1, 20);
+INSERT INTO goldfit.programexerciceseries (programexerciceseriesid, programid, exerciceseriesid, startday, endday) VALUES (3, 2, 2, 21, 40);
+INSERT INTO goldfit.programexerciceseries (programexerciceseriesid, programid, exerciceseriesid, startday, endday) VALUES (4, 2, 3, 41, 60);
 
 
 --
