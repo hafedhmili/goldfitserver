@@ -11,28 +11,15 @@ var router = Router();
 
 async function findProgramDetailsWithName(programName: string, response:any) {
   var res: any;
-//  var con = mysql.createConnection({
-//    host: "localhost",
-//    user: "root",
-//    password: "root",
-//    database: 'GoldFit'
-//  });
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
-//    ssl: false
-    ssl: {
-      rejectUnauthorized: false
-    }
+    ssl:
+      false
+    // {rejectUnauthorized: false }
   });
 
   client.connect();
-
-
-//  var res = await con.connect( async function(err: any, res:any) {
-//    if (err) throw err;
-//    console.log("Connected!");
-//  });
 
   var selectClause = "SELECT * ",
       fromClause =  "FROM goldfit.Program, goldfit.ProgramExerciceSeries, goldfit.ExerciceSeries, goldfit.ExerciceSeriesExercice, goldfit.Exercice ",
@@ -42,19 +29,6 @@ async function findProgramDetailsWithName(programName: string, response:any) {
       "goldfit.ExerciceSeries.idExerciceSeries = goldfit.ExerciceSeriesExercice.ExerciceSeriesId AND " +   // join ExerciceSeries with ExerciceSeriesExerice
       "goldfit.ExerciceSeriesExercice.ExerciceId = goldfit.Exercice.idExercice";    // join ExerciceSeriesExerice with Exercice
   var programQuery = selectClause + fromClause + whereCLAUSE;  
-
-
-
-//  var res = await con.query(programQuery, async function (err:any, result:any, fields:any) {
-//      if (err) throw err;
-//      if ((!result) || (result.length ==0)){
-//        response.status(404).send('Did not find program with name: '+ programName)
-//        return
-//      }
-//      console.log('Found a program with name: ' + programName + ', which is: ',result);
-//      response.set('Access-Control-Allow-Origin', '*');
-//      response.status(201).send(result)
-//    });
 
     client.query(programQuery, async function (err:any, result:any) {
       if (err) throw err;
@@ -89,25 +63,12 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
-//    ssl: false
-    ssl: {
-      rejectUnauthorized: false
-    }
+    ssl: 
+      false
+      // {rejectUnauthorized: false }
   });
 
   client.connect();
-
-//  var con = mysql.createConnection({
-//    host: "localhost",
-//    user: "root",
-//    password: "root",
-//    database: 'GoldFit'
-//  });
-
-//  var res = await con.connect( async function(err: any, res:any) {
-//    if (err) throw err;
-//    console.log("Connected!");
-//  });
 
 
   var selectClause = "SELECT PatientFirstName, PatientLastName, idPatient, ProgramName, idProgramEnrollment, idProgram,ProgramDuration, ProgramDescription, ProgramEnrollmentDate, ProgramStartDate ",
@@ -124,9 +85,50 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
         return
       }
       
-//      const returnResult = stringifyArrayRowDataPackets(result)
-//      console.log('Found an enrollment record, which is: ',returnResult);
-console.log('Found an enrollment record, which is: ',result);
+      console.log('[DEBUG] Found an enrollment record, which is: ',result);
+      response.set('Access-Control-Allow-Origin', '*');
+      response.status(201).send(result.rows)
+    });
+  return ;
+}
+
+/*
+* This function take an enrollment code for a patient and sends back basic information
+* about the program in which they are enrolled. If nothing is found, it sends back
+* an error message
+*/
+async function findEnrollmentDetailsWithCode(enrollmentCode: string, response:any) {
+  var res: any;
+
+  console.log("[DEBUG] Inside findEnrollmentDetailsWithCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL,
+  "and process.env.PORT has value: ", process.env.PORT)
+
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+      ssl: 
+        false
+        // {rejectUnauthorized: false}
+  });
+
+  client.connect();
+
+  var selectClause = "SELECT idProgramEnrollment, PatientId, ProgramId, ProgramEnrollmentDate, ProgramStartDate, ProgramEnrollmentCode,"+
+                      " idProgramDayRecord, date, satisfactionLevel, difficultyLevel, selfEfficacy, painLevel, motivationLevel," +
+                      "idExerciceRecord, ExerciceId, numberSeries, numberRepetitions ",
+      fromClause =  "FROM goldfit.ProgramEnrollment, goldfit.ProgramDayRecord, goldfit.ExerciceRecord ",
+      whereCLAUSE = "WHERE goldfit.ProgramEnrollment.idProgramEnrollment = goldfit.ProgramDayRecord.ProgramEnrollmentId AND "+
+      "goldfit.ExerciceRecord.ProgramDayRecordID = goldfit.ProgramDayRecord.idProgramDayRecord AND " +
+      "goldfit.ProgramEnrollment.ProgramEnrollmentCode = \'" + enrollmentCode + "\'";
+  var programQuery = selectClause + fromClause + whereCLAUSE;  
+
+  client.query(programQuery, async function (err:any, result:any) {
+      if (err) throw err;
+      if ((!result) || (result.length ==0)){
+        response.status(404).send('Did not find enrollment record for enrollmernt code: '+ enrollmentCode)
+        return
+      }
+      
+      console.log('[DEBUG] Found an enrollment record, which is: ',result);
       response.set('Access-Control-Allow-Origin', '*');
       response.status(201).send(result.rows)
     });
@@ -134,8 +136,10 @@ console.log('Found an enrollment record, which is: ',result);
 }
 
 
+
+
 /* GET program header for a given enrollment code. */
-router.get('/',  async function(req:any, res:any, next:any) {
+router.get('/program_header',  async function(req:any, res:any, next:any) {
   console.log('value of ec',req.query.ec)
   var _enrollmentCode = req.query.ec
  if (!_enrollmentCode) {
@@ -150,8 +154,8 @@ router.get('/',  async function(req:any, res:any, next:any) {
   }
 });
 
-/* GET program details for a given progra name. */
-router.get('/program',  async function(req:any, res:any, next:any) {
+/* GET program details for a given program name. */
+router.get('/program_details',  async function(req:any, res:any, next:any) {
   var _programName = req.query.pgm_name
   console.log('value of pgm_name',_programName)
   
@@ -167,5 +171,26 @@ router.get('/program',  async function(req:any, res:any, next:any) {
     res.status(500).send()
   }
 });
+
+
+/* GET enrollment details for a given enrollment code. */
+router.get('/enrollment_details',  async function(req:any, res:any, next:any) {
+  var _enrollmentCode = req.query.ec
+  console.log('value of ec',_enrollmentCode)
+  
+ if (!_enrollmentCode) {
+    console.log('[DEBUG] No enrollment code provided')
+    res.status(404).send('No enrollment code provided');
+    return
+ }
+  try {
+    const prog = await findEnrollmentDetailsWithCode(_enrollmentCode,res)
+  } catch (e) {
+    console.log('Problem querying DB')
+    res.status(500).send()
+  }
+});
+
+
 // module.exports=router;
 export default router
