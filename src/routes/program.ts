@@ -1,9 +1,12 @@
-import  {Exercise} from '../models/program';
+import  {Exercise, Patient} from '../models/program';
 import  {Interval} from '../models/program';
 import  {ExerciseSeries} from '../models/program';
 import  {Program} from '../models/program';
+import { ProgramEnrollment } from '../models/program';
+import { ProgramDayRecord} from '../models/program';
+import { ExerciseRecord } from '../models/program';
 
-var mysql = require('mysql');
+
 import { Client } from 'pg';
 
 const Router = require('express');
@@ -113,11 +116,12 @@ async function findEnrollmentDetailsWithCode(enrollmentCode: string, response:an
   client.connect();
 
   var selectClause = "SELECT idProgramEnrollment, PatientId, ProgramId, ProgramEnrollmentDate, ProgramStartDate, ProgramEnrollmentCode,"+
-                      " idProgramDayRecord, date, satisfactionLevel, difficultyLevel, selfEfficacy, painLevel, motivationLevel," +
-                      "idExerciceRecord, ExerciceId, numberSeries, numberRepetitions ",
-      fromClause =  "FROM goldfit.ProgramEnrollment, goldfit.ProgramDayRecord, goldfit.ExerciceRecord ",
+                      " idProgramDayRecord, date, satisfactionLevel, difficultyLevel, selfEfficacy, painLevel, motivationLevel, exerciseseriesid, " +
+                      "idExerciceRecord, exerciceName, numberSeries, numberRepetitions ",
+      fromClause =  "FROM goldfit.ProgramEnrollment, goldfit.ProgramDayRecord, goldfit.ExerciceRecord, goldfit.Exercice ",
       whereCLAUSE = "WHERE goldfit.ProgramEnrollment.idProgramEnrollment = goldfit.ProgramDayRecord.ProgramEnrollmentId AND "+
       "goldfit.ExerciceRecord.ProgramDayRecordID = goldfit.ProgramDayRecord.idProgramDayRecord AND " +
+      "goldfit.ExerciceRecord.ExerciceId = goldfit.Exercice.idExercice AND " +
       "goldfit.ProgramEnrollment.ProgramEnrollmentCode = \'" + enrollmentCode + "\'";
   var programQuery = selectClause + fromClause + whereCLAUSE;  
 
@@ -128,7 +132,7 @@ async function findEnrollmentDetailsWithCode(enrollmentCode: string, response:an
         return
       }
       
-      console.log('[DEBUG] Found an enrollment record, which is: ',result);
+      console.log('[DEBUG] Found an enrollment record. The result set: ',result.rows);
       response.set('Access-Control-Allow-Origin', '*');
       response.status(201).send(result.rows)
     });
@@ -136,6 +140,93 @@ async function findEnrollmentDetailsWithCode(enrollmentCode: string, response:an
 }
 
 
+/**
+ * This function computes a program enrollment object from the result set of a query with the
+ * following SELECT statement:
+ * SELECT idProgramEnrollment, PatientId, ProgramId, ProgramEnrollmentDate, ProgramStartDate, ProgramEnrollmentCode,
+          idProgramDayRecord, date, satisfactionLevel, difficultyLevel, selfEfficacy, painLevel, motivationLevel, exerciseseriesid,
+          idExerciceRecord, ExerciceId, numberSeries, numberRepetitions
+ * The first time we encounter any ID, we check if we have an object with that ID. If we find in a Map of such objects,
+          we use it, else, we construct it. That way we built a graph of objects.
+ * The function takes three parameters
+ * @param enrollment_results
+ * @returns 
+ */
+function buildEnrollmentFromEnrollmentDetailsQueryResults(enrollment_results: Array<any>, patient: Patient|null, program: Program|null) {
+    // enrollment_results consists of a bunch of rows, each one is the result
+    // of joining a bunch of tables. I have to untangle them
+
+    var tableEnrollments = new Map();
+    var tableDayRecords = new Map();
+    var tableExerciseRecords = new Map();
+    var tableExerciseSeries = new Map() ; // exercise series are in program. This is simply for efficiency
+    var tableExercises = new Map(); // exercises are in program. This one is just for efficiency
+    var currentEnrollment = null
+    var currentDayRecord = null
+    var currentExerciseRecord = null
+
+    enrollment_results.forEach(element => {
+        // A. see if ProgramEnrollment object was already created, if not, create it
+        currentEnrollment = tableEnrollments.get(element.idprogramenrollment)
+        if (!currentEnrollment) {
+          // if patient passed as argument was null, construct one just with the ID
+          if (!patient) patient = new Patient('','',element.patientid)
+
+          // if program passed as argument was null, construct one just with the ID
+          if (!program) program = new Program('','',element.programid)
+
+          currentEnrollment = new ProgramEnrollment(patient, program, element.programenrollmentcode, element.programenrollmentdate, element.programstartdate )
+          // ProgramEnrollmentDate, ProgramStartDate, ProgramEnrollmentCode
+          tableEnrollments.set(element.programenrollmentcode,currentEnrollment)
+        }
+
+        // B. see if ProgramDayRecord was already created, if not create it
+        
+        currentDayRecord = tableDayRecords.get(element.idprogramdayrecord)
+        
+        // if first time encountered, create it
+        if (!currentDayRecord) {
+          // 1. first get the date of the day record, by converting the string 'date' to a 
+          // date object
+          const currentDayRecordDate = new Date(element.date)
+          
+          // 2. get the exercice series applicable on that date. 
+          // a. First, search by id in table
+          var exerciceSeries = tableExerciseSeries.get(element.exerciseseriesid)
+
+          // b. If not found, look for it the hard way
+          if (!exerciceSeries) {
+            exerciceSeries = currentEnrollment.getExerciseSeriesForDay(currentDayRecordDate)
+            tableExerciseSeries.set(element.exerciseseriesid,exerciceSeries)
+          }
+
+          // 3. Now, create DayRecord, and add it to tableDayRecords
+          currentDayRecord = new ProgramDayRecord( currentDayRecordDate, exerciceSeries )
+          currentDayRecord.difficultyLevel = element.difficultylevel
+          currentDayRecord.motivationLevel = element.motivationlevel
+          currentDayRecord.painLevel = element.painlevel
+          currentDayRecord.satisfactionLevel = element.satisfactionlevel
+          currentDayRecord.selfEfficacy = element.selfefficacy
+
+          tableDayRecords.set(element.idprogramdayrecord,currentDayRecord)
+        }
+
+        // C. Now, create exercice record!
+        // 1. First, find exercise
+        var exercice = tableExercises.get(element.exercicename)
+        if (!exercice) {
+          // look for it in current exerciseSeries object
+          exercice = exerciceSeries.getExerciceWithName(element.exercicename)
+          tableExercises.set(element.exercicename,exercice)
+        }
+        // 2. Now create exercise record
+        var exerciceRecord = new ExerciseRecord(exercice,JSON.parse(element.numSeries), JSON.parse(element.numRepetitions))
+        // 3. Now, add it to day record
+        currentDayRecord.addExerciceRecord(exerciceRecord)
+    });
+
+    return currentEnrollment;
+}
 
 
 /* GET program header for a given enrollment code. */

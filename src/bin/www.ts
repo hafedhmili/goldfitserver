@@ -90,7 +90,7 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
 
-    TestFunctions.testDataAccess()
+    //TestFunctions.testDataAccess()
     console.log('Listening on ' + bind)
 //  debug('Listening on ' + bind);
 }

@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("../app"));
 //var debug = require('debug')('goldfitserver:server');
 const http_1 = __importDefault(require("http"));
-const data_1 = __importDefault(require("../tests/data"));
 /**
  * Get port from environment and store in Express.
  */
@@ -75,7 +74,7 @@ function onListening() {
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    data_1.default.testDataAccess();
+    //TestFunctions.testDataAccess()
     console.log('Listening on ' + bind);
     //  debug('Listening on ' + bind);
 }
