@@ -14,3 +14,9 @@ To update the database, there are two ways.
 *   Inside pg:psql, type \ir relative-path-name-sql-file ;
 *   This will execute the SQL file. Make sure that the SQL file contains a "DROP SCHEMA goldfit" command, so that it starts afresh
 *   Make sure that the file /config/config.env has the appropriate database URI, which includes the URL and the credentials. You can find those by looking at the settings of the database (credentials) within the heroku portal
+2) SMARTER WAY
+*   set the environment variable DATABASE_URL in the shell to the remote HEROKU database
+*   syncrhonize the local database with the remote HEROKU data using the pg:push command as follows, where postgres and golfit correspond to the user name and password of the local data base server. Both can be found in the config.env file for the database URL in the following form: DATABASE_URL="postgresql://user_name:password@localhost:5432/postgres"
+*   PGUSER=postgres PGPASSWORD=goldfit sudo heroku pg:push postgres DATABASE_URL
+*   You should be all set!
+
