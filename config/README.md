@@ -13,6 +13,7 @@ To update the database, there are two ways.
 *   Start the PG SQL CLI on the heroku data base. This can be done by typing the command heroku pg:psql. If you are not authenticated on heroku, it will ask you to.
 *   Inside pg:psql, type \ir relative-path-name-sql-file ;
 *   This will execute the SQL file. Make sure that the SQL file contains a "DROP SCHEMA goldfit" command, so that it starts afresh
+*   There is a \connect command whichg gave me trouble. I had to comment it out to be able to read the sql file
 *   Make sure that the file /config/config.env has the appropriate database URI, which includes the URL and the credentials. You can find those by looking at the settings of the database (credentials) within the heroku portal
 2) SMARTER WAY
 *   set the environment variable DATABASE_URL in the shell to the remote HEROKU database
