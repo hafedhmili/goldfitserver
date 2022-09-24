@@ -9,12 +9,14 @@ import app from '../app';
 import http from 'http';
 
 import TestFunctions from '../tests/data'
+import { setFlagsFromString } from 'v8';
 
 /**
  * Get port from environment and store in Express.
  */
 
 var port = normalizePort(process.env.PORT || '3000');
+console.log('[DEBUG] Upon starting, the port is: ',port)
 app.set('port', port);
 
 /**
