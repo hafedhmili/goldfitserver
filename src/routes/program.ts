@@ -18,8 +18,7 @@ async function findProgramDetailsWithName(programName: string, response:any) {
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
     ssl:
-      false
-    // {rejectUnauthorized: false }
+      {rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
   });
 
   client.connect();
@@ -67,8 +66,8 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
     ssl: 
-      false
-      // {rejectUnauthorized: false }
+      // false
+       {rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
   });
 
   client.connect();
@@ -109,8 +108,8 @@ async function findEnrollmentDetailsWithCode(enrollmentCode: string, response:an
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
       ssl: 
-        false
-        // {rejectUnauthorized: false}
+        // false
+        {rejectUnauthorized: false} // use this when connecting to cloud based database. Else, set ssl: to false
   });
 
   client.connect();

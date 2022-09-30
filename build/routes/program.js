@@ -22,8 +22,7 @@ function findProgramDetailsWithName(programName, response) {
         var res;
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: false
-            // {rejectUnauthorized: false }
+            ssl: { rejectUnauthorized: false }
         });
         client.connect();
         var selectClause = "SELECT * ", fromClause = "FROM goldfit.Program, goldfit.ProgramExerciceSeries, goldfit.ExerciceSeries, goldfit.ExerciceSeriesExercice, goldfit.Exercice ", whereCLAUSE = "WHERE goldfit.Program.ProgramName = \'" + programName + "\' AND " +
@@ -64,8 +63,9 @@ function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
         console.log("Inside findProgramHeaderForEnrollmentCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL, "and process.env.PORT has value: ", process.env.PORT);
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: false
-            // {rejectUnauthorized: false }
+            ssl: 
+            //true // false
+            { rejectUnauthorized: false }
         });
         client.connect();
         var selectClause = "SELECT PatientFirstName, PatientLastName, idPatient, ProgramName, idProgramEnrollment, idProgram,ProgramDuration, ProgramDescription, ProgramEnrollmentDate, ProgramStartDate ", fromClause = "FROM goldfit.ProgramEnrollment, goldfit.Program, goldfit.Patient ", whereCLAUSE = "WHERE goldfit.ProgramEnrollment.ProgramId = goldfit.Program.idProgram AND " +
@@ -99,8 +99,9 @@ function findEnrollmentDetailsWithCode(enrollmentCode, response) {
         console.log("[DEBUG] Inside findEnrollmentDetailsWithCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL, "and process.env.PORT has value: ", process.env.PORT);
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: false
-            // {rejectUnauthorized: false}
+            ssl: 
+            // true // false
+            { rejectUnauthorized: false }
         });
         client.connect();
         var selectClause = "SELECT idProgramEnrollment, PatientId, ProgramId, ProgramEnrollmentDate, ProgramStartDate, ProgramEnrollmentCode," +
