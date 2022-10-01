@@ -22,7 +22,7 @@ function findProgramDetailsWithName(programName, response) {
         var res;
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: { rejectUnauthorized: false }
+            ssl: { rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
         });
         client.connect();
         var selectClause = "SELECT * ", fromClause = "FROM goldfit.Program, goldfit.ProgramExerciceSeries, goldfit.ExerciceSeries, goldfit.ExerciceSeriesExercice, goldfit.Exercice ", whereCLAUSE = "WHERE goldfit.Program.ProgramName = \'" + programName + "\' AND " +
@@ -64,8 +64,8 @@ function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
             ssl: 
-            //true // false
-            { rejectUnauthorized: false }
+            // false
+            { rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
         });
         client.connect();
         var selectClause = "SELECT PatientFirstName, PatientLastName, idPatient, ProgramName, idProgramEnrollment, idProgram,ProgramDuration, ProgramDescription, ProgramEnrollmentDate, ProgramStartDate ", fromClause = "FROM goldfit.ProgramEnrollment, goldfit.Program, goldfit.Patient ", whereCLAUSE = "WHERE goldfit.ProgramEnrollment.ProgramId = goldfit.Program.idProgram AND " +
@@ -100,8 +100,8 @@ function findEnrollmentDetailsWithCode(enrollmentCode, response) {
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
             ssl: 
-            // true // false
-            { rejectUnauthorized: false }
+            // false
+            { rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
         });
         client.connect();
         var selectClause = "SELECT idProgramEnrollment, PatientId, ProgramId, ProgramEnrollmentDate, ProgramStartDate, ProgramEnrollmentCode," +
@@ -169,8 +169,12 @@ function buildEnrollmentFromEnrollmentDetailsQueryResults(enrollment_results, pa
         // if first time encountered, create it
         if (!currentDayRecord) {
             // 1. first get the date of the day record, by converting the string 'date' to a 
-            // date object
-            const currentDayRecordDate = new Date(element.date);
+            // date object. But watch out: make sure it is in local time and not UTC
+            var currentDayRecordDateString = element.date;
+            if (currentDayRecordDateString.length < 11) {
+                currentDayRecordDateString = currentDayRecordDateString + 'T00:00:00';
+            }
+            const currentDayRecordDate = new Date(currentDayRecordDateString);
             // 2. get the exercice series applicable on that date. 
             // a. First, search by id in table
             var exerciceSeries = tableExerciseSeries.get(element.exerciseseriesid);

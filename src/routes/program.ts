@@ -186,8 +186,12 @@ function buildEnrollmentFromEnrollmentDetailsQueryResults(enrollment_results: Ar
         // if first time encountered, create it
         if (!currentDayRecord) {
           // 1. first get the date of the day record, by converting the string 'date' to a 
-          // date object
-          const currentDayRecordDate = new Date(element.date)
+          // date object. But watch out: make sure it is in local time and not UTC
+          var currentDayRecordDateString = element.date
+          if (currentDayRecordDateString.length < 11 ) {
+            currentDayRecordDateString = currentDayRecordDateString + 'T00:00:00'
+          }
+          const currentDayRecordDate = new Date(currentDayRecordDateString)
           
           // 2. get the exercice series applicable on that date. 
           // a. First, search by id in table
