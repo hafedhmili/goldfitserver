@@ -121,7 +121,7 @@ class ExerciseRecord {
 exports.ExerciseRecord = ExerciseRecord;
 var DifficultyLevel;
 (function (DifficultyLevel) {
-    DifficultyLevel["VeryEasy"] = "Very  Easy";
+    DifficultyLevel["VeryEasy"] = "Very Easy";
     DifficultyLevel["Easy"] = "Easy";
     DifficultyLevel["Difficult"] = "Difficult";
     DifficultyLevel["VeryDifficult"] = "Very Difficult";

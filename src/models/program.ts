@@ -155,7 +155,7 @@ export class ExerciseRecord {
 }
 
 export enum DifficultyLevel {
-    VeryEasy = "Very  Easy",
+    VeryEasy = "Very Easy",
     Easy = "Easy",
     Difficult = "Difficult",
     VeryDifficult = "Very Difficult"
