@@ -411,12 +411,6 @@ export class ProgramEnrollment {
             this.enrollmentCode = element.programenrollmentcode
             var enrollmentDataString = element.programenrollmentdate,
             startDateString = element.programstartdate
-            if (enrollmentDataString.length<11){
-                enrollmentDataString = enrollmentDataString+'T00:00:00'
-            }
-            if (startDateString.length < 11){
-                startDateString = startDateString+ 'T00:00:00'
-            }
 
             this.enrollmentDate = new Date(enrollmentDataString)
             this.startDate = new Date(startDateString)

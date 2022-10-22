@@ -334,12 +334,6 @@ class ProgramEnrollment {
             // 1 :-): new Date('2022-05-20'), run at 9:00 pm EDT will yield 2022-05-19T:20:00:00 ...
             this.enrollmentCode = element.programenrollmentcode;
             var enrollmentDataString = element.programenrollmentdate, startDateString = element.programstartdate;
-            if (enrollmentDataString.length < 11) {
-                enrollmentDataString = enrollmentDataString + 'T00:00:00';
-            }
-            if (startDateString.length < 11) {
-                startDateString = startDateString + 'T00:00:00';
-            }
             this.enrollmentDate = new Date(enrollmentDataString);
             this.startDate = new Date(startDateString);
             // B. see if ProgramDayRecord was already created, if not create it
