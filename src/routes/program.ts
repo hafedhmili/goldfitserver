@@ -12,13 +12,20 @@ import { Client } from 'pg';
 const Router = require('express');
 var router = Router();
 
+
+function getSSLConnectionOption() {
+  var db_URL = process.env.DATABASE_URL
+  if (db_URL?.includes("@localhost")) return false
+  else return {rejectUnauthorized: false }
+}
+
 async function findProgramDetailsWithName(programName: string, response:any) {
   var res: any;
+  const SSLConnectionOption = getSSLConnectionOption()
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl:
-      {rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
+    ssl: SSLConnectionOption
   });
 
   client.connect();
@@ -59,15 +66,14 @@ function stringifyArrayRowDataPackets(rows: any) {
 */
 async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, response:any) {
   var res: any;
+  const SSLConnectionOption = getSSLConnectionOption()
 
   console.log("Inside findProgramHeaderForEnrollmentCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL,
   "and process.env.PORT has value: ", process.env.PORT)
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: 
-      // false
-       {rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
+    ssl: SSLConnectionOption
   });
 
   client.connect();
@@ -101,15 +107,14 @@ async function findProgramHeaderForEnrollmentCode(enrollmentCode: string, respon
 */
 async function findEnrollmentDetailsWithCode(enrollmentCode: string, response:any) {
   var res: any;
+  const SSLConnectionOption = getSSLConnectionOption()
 
   console.log("[DEBUG] Inside findEnrollmentDetailsWithCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL,
   "and process.env.PORT has value: ", process.env.PORT)
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
-      ssl: 
-        // false
-        {rejectUnauthorized: false} // use this when connecting to cloud based database. Else, set ssl: to false
+      ssl: SSLConnectionOption
   });
 
   client.connect();

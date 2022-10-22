@@ -17,12 +17,20 @@ const program_5 = require("../models/program");
 const pg_1 = require("pg");
 const Router = require('express');
 var router = Router();
+function getSSLConnectionOption() {
+    var db_URL = process.env.DATABASE_URL;
+    if (db_URL === null || db_URL === void 0 ? void 0 : db_URL.includes("@localhost"))
+        return false;
+    else
+        return { rejectUnauthorized: false };
+}
 function findProgramDetailsWithName(programName, response) {
     return __awaiter(this, void 0, void 0, function* () {
         var res;
+        const SSLConnectionOption = getSSLConnectionOption();
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: { rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
+            ssl: SSLConnectionOption
         });
         client.connect();
         var selectClause = "SELECT * ", fromClause = "FROM goldfit.Program, goldfit.ProgramExerciceSeries, goldfit.ExerciceSeries, goldfit.ExerciceSeriesExercice, goldfit.Exercice ", whereCLAUSE = "WHERE goldfit.Program.ProgramName = \'" + programName + "\' AND " +
@@ -60,12 +68,11 @@ function stringifyArrayRowDataPackets(rows) {
 function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
     return __awaiter(this, void 0, void 0, function* () {
         var res;
+        const SSLConnectionOption = getSSLConnectionOption();
         console.log("Inside findProgramHeaderForEnrollmentCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL, "and process.env.PORT has value: ", process.env.PORT);
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: 
-            // false
-            { rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
+            ssl: SSLConnectionOption
         });
         client.connect();
         var selectClause = "SELECT PatientFirstName, PatientLastName, idPatient, ProgramName, idProgramEnrollment, idProgram,ProgramDuration, ProgramDescription, ProgramEnrollmentDate, ProgramStartDate ", fromClause = "FROM goldfit.ProgramEnrollment, goldfit.Program, goldfit.Patient ", whereCLAUSE = "WHERE goldfit.ProgramEnrollment.ProgramId = goldfit.Program.idProgram AND " +
@@ -96,12 +103,11 @@ function findProgramHeaderForEnrollmentCode(enrollmentCode, response) {
 function findEnrollmentDetailsWithCode(enrollmentCode, response) {
     return __awaiter(this, void 0, void 0, function* () {
         var res;
+        const SSLConnectionOption = getSSLConnectionOption();
         console.log("[DEBUG] Inside findEnrollmentDetailsWithCode, process.env.DATABASE_URL has value: ", process.env.DATABASE_URL, "and process.env.PORT has value: ", process.env.PORT);
         const client = new pg_1.Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: 
-            // false
-            { rejectUnauthorized: false } // use this when connecting to cloud based database. Else, set ssl: to false
+            ssl: SSLConnectionOption
         });
         client.connect();
         var selectClause = "SELECT idProgramEnrollment, PatientId, ProgramId, ProgramEnrollmentDate, ProgramStartDate, ProgramEnrollmentCode," +
